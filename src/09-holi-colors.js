@@ -54,21 +54,82 @@
  *   // red and blue objects are UNCHANGED
  */
 export function mixColors(color1, color2) {
-  // Your code here
+  if (
+    !color1 ||
+    !color2 ||
+    typeof color1 !== "object" ||
+    typeof color2 !== "object"
+  ) {
+    return null;
+  }
+
+  const keys = ["name", "r", "g", "b"];
+
+  for (let key of keys) {
+    if (!(key in color1) || !(key in color2)) {
+      return null;
+    }
+  }
+
+  return {
+    name: `${color1.name}-${color2.name}`,
+    r: Math.round((color1.r + color2.r) / 2),
+    g: Math.round((color1.g + color2.g) / 2),
+    b: Math.round((color1.b + color2.b) / 2),
+  };
 }
 
 export function adjustBrightness(color, factor) {
-  // Your code here
-}
+  if (!color || typeof color !== "object" || typeof factor !== "number") {
+    return null;
+  }
 
+  const keys = ["name", "r", "g", "b"];
+  for (let key of keys) {
+    if (!(key in color)) return null;
+  }
+
+  const clamp = (value) => Math.min(255, Math.max(0, Math.round(value)));
+
+  return {
+    name: color.name,
+    r: clamp(color.r * factor),
+    g: clamp(color.g * factor),
+    b: clamp(color.b * factor),
+  };
+}
 export function addToPalette(palette, color) {
-  // Your code here
+  let copy = structuredClone(palette);
+  if (!Array.isArray(palette)) return [color];
+  if (
+    !color ||
+    typeof color !== "object" ||
+    !("name" in color && "r" in color && "g" in color && "b" in color)
+  )
+    return copy;
+  copy.push(color);
+  return copy;
 }
 
 export function removeFromPalette(palette, colorName) {
-  // Your code here
+  if (!Array.isArray(palette)) return [];
+
+  return palette.filter((color) => color.name !== colorName);
 }
 
 export function mergePalettes(palette1, palette2) {
-  // Your code here
+  const p1 = Array.isArray(palette1) ? palette1 : [];
+  const p2 = Array.isArray(palette2) ? palette2 : [];
+
+  const result = [];
+  const names = [];
+
+  for (let color of [...p1, ...p2]) {
+    if (!names.includes(color.name)) {
+      names.push(color.name);
+      result.push(color);
+    }
+  }
+
+  return result;
 }
